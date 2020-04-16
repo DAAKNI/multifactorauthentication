@@ -6,7 +6,7 @@ using MultiFactorAuthentication.API.Models;
 
 namespace MultiFactorAuthentication.API.Services
 {
-    interface IEcuData
+    public interface IEcuData
     {
         Ecu Create(Ecu newEcu);
         IEnumerable<Ecu> GetAll();
