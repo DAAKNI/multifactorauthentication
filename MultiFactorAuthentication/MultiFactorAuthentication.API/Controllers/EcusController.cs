@@ -15,12 +15,11 @@ namespace MultiFactorAuthentication.API.Controllers
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public class EcusController : ControllerBase
   {
-    private readonly IEcuData ecuData;
+    private readonly IEcuService ecuData;
 
-    public EcusController(IEcuData ecuData)
+    public EcusController(IEcuService ecuData)
     {
       this.ecuData = ecuData;
-
     }
 
     [HttpPost()]

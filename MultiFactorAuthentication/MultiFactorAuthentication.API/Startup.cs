@@ -32,7 +32,7 @@ namespace MultiFactorAuthentication.API
        services.AddAuthentication()
          .AddCookie()
          .AddJwtBearer();
-      services.AddSingleton<IEcuData, InMemoryEcuData>();
+      services.AddSingleton<IEcuService, InMemoryEcuService>();
       //services.AddScoped<IEcuData, InMemoryEcuData>();
       services.AddControllers(setupAction =>
       {

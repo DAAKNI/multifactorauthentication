@@ -7,11 +7,11 @@ using MultiFactorAuthentication.API.Models;
 namespace MultiFactorAuthentication.API.Services
 {
 
-  public class InMemoryEcuData : IEcuData
+  public class InMemoryEcuService : IEcuService
   {
     List<Ecu> ecus;
 
-    public InMemoryEcuData()
+    public InMemoryEcuService()
     {
       ecus = new List<Ecu>()
             {
