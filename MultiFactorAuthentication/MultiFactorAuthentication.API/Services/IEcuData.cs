@@ -6,13 +6,13 @@ using MultiFactorAuthentication.API.Models;
 
 namespace MultiFactorAuthentication.API.Services
 {
-    public interface IEcuData
-    {
-        Ecu Create(Ecu newEcu);
-        IEnumerable<Ecu> GetAll();
-        Ecu GetById(int id);
-        Ecu Update(Ecu updatedEcu);
-        Ecu Delete(int id);
+  public interface IEcuData
+  {
+    Ecu Create(Ecu newEcu);
+    IEnumerable<Ecu> GetAll();
+    Ecu GetById(int id);
+    Ecu Update(Ecu updatedEcu);
+    Ecu Delete(int id);
 
-    }
+  }
 }

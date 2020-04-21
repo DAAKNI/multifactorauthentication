@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace MultiFactorAuthentication.API.Models
 {
-    public class User
-    {
-        [Key]
-        public int Id { get; set; }
+  public class User
+  {
+    [Key]
+    public int Id { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public string Name { get; set; }
+    public string Password { get; set; }
+    public string Role { get; set; }
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 
-    }
+  }
 }
