@@ -26,6 +26,12 @@ namespace MultiFactorAuthentication.API
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      //services.AddIdentity<StoreUser, IdentityRole>(config => { config.User.RequireUniqueEmail = true; })
+       // .AddEntityFrameWorkStores<DutchContext>();
+
+       services.AddAuthentication()
+         .AddCookie()
+         .AddJwtBearer();
       services.AddSingleton<IEcuData, InMemoryEcuData>();
       //services.AddScoped<IEcuData, InMemoryEcuData>();
       services.AddControllers(setupAction =>
@@ -44,7 +50,7 @@ namespace MultiFactorAuthentication.API
       }
 
       app.UseRouting();
-
+      app.UseAuthentication();
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
