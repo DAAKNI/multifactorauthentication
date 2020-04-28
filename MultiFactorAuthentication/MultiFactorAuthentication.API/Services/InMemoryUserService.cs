@@ -14,7 +14,7 @@ namespace MultiFactorAuthentication.API.Services
       {
         users = new List<User>()
         {
-          new User() {Id = 1, Name = "Dan", Email = "daakni@gmail.com"},
+          new User() {Id = 1, Name = "Dan", Email = "daakni@gmail.com", Password = "secret"},
         };
       }
     }

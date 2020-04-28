@@ -49,7 +49,6 @@ namespace MultiFactorAuthentication.API.Services
       }
 
       return ecu;
-
     }
 
     public Ecu Delete(int id)
