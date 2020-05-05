@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
+using MultiFactorAuthentication.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using MultiFactorAuthentication.API.Services;
+using MultiFactorAuthentication.Web.Services;
 
-namespace MultiFactorAuthentication.API
+namespace MultiFactorAuthentication.Web
 {
   public class Startup
   {
@@ -28,33 +28,15 @@ namespace MultiFactorAuthentication.API
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      //services.AddIdentity<StoreUser, IdentityRole>(config => { config.User.RequireUniqueEmail = true; })
-      // .AddEntityFrameWorkStores<DutchContext>();
-
-
-      // Conf
+      services.AddDbContext<ApplicationDbContext>(options =>
+          options.UseSqlServer(
+              Configuration.GetConnectionString("DefaultConnection")));
+      services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+          .AddEntityFrameworkStores<ApplicationDbContext>();
       services.AddControllersWithViews();
       services.AddRazorPages();
-
-      services.AddAuthentication()
-         .AddCookie()
-         .AddJwtBearer(cfg =>
-         {
-           cfg.TokenValidationParameters = new TokenValidationParameters()
-           {
-             ValidIssuer = Configuration["Tokens:Issuer"],
-             ValidAudience = Configuration["Tokens:Audience"],
-             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
-           };
-         });
       services.AddSingleton<IEcuService, InMemoryEcuService>();
       services.AddSingleton<IUserService, InMemoryUserService>();
-      //services.AddScoped<IEcuData, InMemoryEcuData>();
-      services.AddControllers(setupAction =>
-      {
-        setupAction.ReturnHttpNotAcceptable = true;
-
-      }).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,23 +45,29 @@ namespace MultiFactorAuthentication.API
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
+        app.UseDatabaseErrorPage();
       }
-
-      // Conf
+      else
+      {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+      }
       app.UseHttpsRedirection();
       app.UseStaticFiles();
 
-
       app.UseRouting();
+
       app.UseAuthentication();
+
+     
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
       {
-        //endpoints.MapControllers();
         endpoints.MapControllerRoute(
-          name: "default",
-          pattern: "{controller=Home}/{action=Index}/{id?}");
+                  name: "default",
+                  pattern: "{controller=Home}/{action=Index}/{id?}");
         endpoints.MapRazorPages();
       });
     }
