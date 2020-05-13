@@ -9,26 +9,33 @@ using Fido2NetLib.Objects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MultiFactorAuthentication.Web.Data;
+using MultiFactorAuthentication.Web.Models;
+using MultiFactorAuthentication.Web.Services;
 
 
 namespace MultiFactorAuthentication.Web.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
-    public class FidoController : Controller
+    public class Fido2Controller : Controller
     {
       
       private readonly IFido2 _fido2;
-      private readonly UserManager<IdentityUser> _userManager;
+      private readonly IFido2CredentialService _fido2CredentialService;
+      private readonly UserManager<ApplicationUser> _userManager;
       public static IMetadataService _mds;
       public static readonly DevelopmentInMemoryStore DemoStorage = new DevelopmentInMemoryStore();
 
 
-    public FidoController(
-      UserManager<IdentityUser> userManager,
-      IFido2 fido2)
+    public Fido2Controller(
+      UserManager<ApplicationUser> userManager,
+      IFido2 fido2,
+      IFido2CredentialService fido2CredentialService
+      )
     {
       _fido2 = fido2;
+      _fido2CredentialService = fido2CredentialService;
       _userManager = userManager;
     }
 
@@ -55,18 +62,18 @@ namespace MultiFactorAuthentication.Web.Controllers
         //}
 
         
-        var identityEmail = await _userManager.GetUserAsync(HttpContext.User);
+        var applicationUser = await _userManager.GetUserAsync(HttpContext.User);
 
-        // 1. Get user from DB by username (in our example, auto create missing users)
-        var user = DemoStorage.GetOrAddUser(username, () => new Fido2User
+         // 1. Get user from DB by username (in our example, auto create missing users)
+        var user = new Fido2User
         {
-          DisplayName = displayName,
-          Name = username,
-          Id = Encoding.UTF8.GetBytes(username) // byte representation of userID is required
-        });
+          Id = Encoding.UTF8.GetBytes(applicationUser.Id) // byte representation of userID is required
+        };
 
         // 2. Get user existing keys by username
-        var existingKeys = DemoStorage.GetCredentialsByUser(user).Select(c => c.Descriptor).ToList();
+        // var existingKeys = DemoStorage.GetCredentialsByUser(user).Select(c => c.Descriptor).ToList();
+        var existingKeys = new List<PublicKeyCredentialDescriptor>();
+          //_fido2CredentialService.GetCredentialsByUser(applicationUser).Select(c => c.Descriptor).ToList();
 
         // 3. Create options
         var authenticatorSelection = new AuthenticatorSelection
@@ -117,29 +124,43 @@ namespace MultiFactorAuthentication.Web.Controllers
         var options = CredentialCreateOptions.FromJson(jsonOptions);
 
         // 2. Create callback so that lib can verify credential id is unique to this user
+        // IsCredentialIdUniqueToUserAsyncDelegate callback = async (IsCredentialIdUniqueToUserParams args) =>
+        // {
+        //   // var users = await DemoStorage.GetUsersByCredentialIdAsync(args.CredentialId);
+        //   var users = await _fido2CredentialService.GetUsersByCredentialIdAsync(args.CredentialId);
+        //   if (users.Count > 0)
+        //     return false;
+        //
+        //   return true;
+        // };
         IsCredentialIdUniqueToUserAsyncDelegate callback = async (IsCredentialIdUniqueToUserParams args) =>
         {
-          var users = await DemoStorage.GetUsersByCredentialIdAsync(args.CredentialId);
-          if (users.Count > 0)
-            return false;
-
+          // #TODO Check if credentials are unique
           return true;
         };
 
         // 2. Verify and make the credentials
         var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, callback);
 
-        // 3. Store the credentials in db
-        DemoStorage.AddCredentialToUser(options.User, new StoredCredential
+        
+        var applicationUser = await _userManager.GetUserAsync(HttpContext.User);
+
+        // Schreibe die Credentials in die Datenbank
+        await _fido2CredentialService.AddCredentialToUser(new Fido2Credential()
         {
-          Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
-          PublicKey = success.Result.PublicKey,
-          UserHandle = success.Result.User.Id,
-          SignatureCounter = success.Result.Counter,
-          CredType = success.Result.CredType,
-          RegDate = DateTime.Now,
-          AaGuid = success.Result.Aaguid
+           UserId = applicationUser.Id,
+           Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
+           PublicKey = success.Result.PublicKey,
+           UserHandle = success.Result.User.Id,
+           SignatureCounter = success.Result.Counter,
+           CredType = success.Result.CredType,
+           RegDate = DateTime.Now,
+           AaGuid = success.Result.Aaguid
         });
+
+        
+        // #TODO Return Databse Entry not just JSON
+
 
         // 4. return "ok" to the client
         return new JsonResult(success);

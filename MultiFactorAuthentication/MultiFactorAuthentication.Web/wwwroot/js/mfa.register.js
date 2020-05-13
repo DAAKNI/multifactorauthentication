@@ -32,14 +32,15 @@ async function handleRegisterSubmit(event) {
     data.append('requireResidentKey', require_resident_key);
 
     // send to server for registering
-    let makeCredentialOptions;
-    try {
+  let makeCredentialOptions;
+  console.log(data);
+  try {
         makeCredentialOptions = await fetchMakeCredentialOptions(data);
 
     } catch (e) {
         console.error(e);
         let msg = "Something wen't really wrong";
-        showErrorAlert(msg);
+        showErrorAlert(e);
     }
 
 

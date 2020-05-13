@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFactorAuthentication.Web.Data;
 
 namespace MultiFactorAuthentication.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200512151115_Fido2Credential")]
+    partial class Fido2Credential
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,9 +237,6 @@ namespace MultiFactorAuthentication.Web.Data.Migrations
                     b.Property<string>("CredType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Foo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<byte[]>("PublicKey")
                         .HasColumnType("varbinary(max)");
 
@@ -250,8 +249,8 @@ namespace MultiFactorAuthentication.Web.Data.Migrations
                     b.Property<byte[]>("UserHandle")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("UserId")
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
