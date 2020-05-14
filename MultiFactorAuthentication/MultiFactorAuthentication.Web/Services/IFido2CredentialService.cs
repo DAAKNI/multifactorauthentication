@@ -10,9 +10,10 @@ namespace MultiFactorAuthentication.Web.Services
 {
   public interface IFido2CredentialService
   {
-    Fido2Credential GetCredentialByUserId(int id);
+    
     void AddCredential(Fido2Credential cred);
     Task<int> UpdateCounter(byte[] credentialId, uint counter);
+    Fido2Credential GetCredentialByUser(ApplicationUser user);
     Task<List<Fido2Credential>> GetCredentialsByUser(ApplicationUser user);
     List<ApplicationUser> GetUsersByCredentialIdAsync(byte[] argsCredentialId);
     Task<Fido2Credential> AddCredentialToUser(Fido2Credential storedCredential);

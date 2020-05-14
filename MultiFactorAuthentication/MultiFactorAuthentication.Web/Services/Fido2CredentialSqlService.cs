@@ -22,9 +22,9 @@ namespace MultiFactorAuthentication.Web.Services
       _db = db;
     }
     
-    public Fido2Credential GetCredentialByUserId(int id)
+    public Fido2Credential GetCredentialByUser(ApplicationUser user)
     {
-      return _db.Fido2Credentials.Find(id);
+      return _db.Fido2Credentials.FirstOrDefault(c => c.UserId == user.Id);
     }
 
     public void AddCredential(Fido2Credential cred)
@@ -34,7 +34,7 @@ namespace MultiFactorAuthentication.Web.Services
 
     public async Task<int> UpdateCounter(byte[] credentialId, uint counter)
     {
-      var cred = _db.Fido2Credentials.Where(c => new PublicKeyCredentialDescriptor(c.Descriptor).Id.SequenceEqual(credentialId)).FirstOrDefault();
+      var cred = _db.Fido2Credentials.FirstOrDefault(c => new PublicKeyCredentialDescriptor(c.Descriptor).Id.SequenceEqual(credentialId));
       cred.SignatureCounter = counter;
       await _db.SaveChangesAsync();
       return 0;

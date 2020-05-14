@@ -6,14 +6,13 @@
 
 <h1>@ViewData["Title"]</h1>
 <hr />
-<p>Your login is protected with an Fido2 Device.</p>
+<p>Your login is protected with an Fido2 Device. Please insert your device an proceed</p>
 <div class="row">
   <div class="col-md-4">
     <form action="/LoginWithFido2" method="post" id="signin">
-      <input class="input" type="hidden" value="@User.Identity.Name" required name="username">
       <div class="field">
         <div class="control">
-          <button class="btn btn-primary">2FA with Fido2 device</button>
+          <button class="btn btn-primary">Confirm Second Factor</button>
         </div>
       </div>
     </form>

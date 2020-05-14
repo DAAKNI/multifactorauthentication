@@ -154,7 +154,7 @@ namespace MultiFactorAuthentication.Web.Controllers
         {
            UserId = applicationUser.Id,
            Descriptor = success.Result.CredentialId,
-          PublicKey = success.Result.PublicKey,
+           PublicKey = success.Result.PublicKey,
            UserHandle = success.Result.User.Id,
            SignatureCounter = success.Result.Counter,
            CredType = success.Result.CredType,
@@ -246,13 +246,12 @@ namespace MultiFactorAuthentication.Web.Controllers
         var options = AssertionOptions.FromJson(jsonOptions);
 
         // 2. Get registered credential from database
-        //var creds = DemoStorage.GetCredentialById(clientResponse.Id);
+
         var signInUser = await _signInManager.GetTwoFactorAuthenticationUserAsync();
         var applicationUser = await _userManager.FindByNameAsync(signInUser.UserName);
-        // var creds = await _fido2CredentialService.GetCredentialsByUser(applicationUser);
-        var creds = _fido2CredentialService.GetCredentialByUserId(1);
+        var creds = _fido2CredentialService.GetCredentialByUser(applicationUser);
 
-        //existingCredentials = creds.Select(c => new PublicKeyCredentialDescriptor(c.Descriptor)).ToList();
+   
 
         if (creds == null)
         {
@@ -274,7 +273,8 @@ namespace MultiFactorAuthentication.Web.Controllers
 
         // 6. Store the updated counter
         // var code = await _fido2CredentialService.UpdateCounter(res.CredentialId, res.Counter);
-
+        // #TODO Fix counter
+        // #TODO Allow more than one key to work
         
         // var result = await _signInManager.TwoFactorSignInAsync("Fido2", string.Empty, false, false);
         await _signInManager.SignInAsync(applicationUser, false);
