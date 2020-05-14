@@ -52,7 +52,7 @@ namespace MultiFactorAuthentication.Web
       services.AddDbContext<ApplicationDbContext>(options =>
           options.UseSqlServer(
               Configuration.GetConnectionString("DefaultConnection")));
-      services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+      services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders(); 
       services.AddScoped<IFido2CredentialService, Fido2CredentialSqlService>();
