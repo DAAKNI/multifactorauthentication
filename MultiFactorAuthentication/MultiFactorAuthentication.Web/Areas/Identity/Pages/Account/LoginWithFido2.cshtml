@@ -1,0 +1,33 @@
+﻿@page
+@model MultiFactorAuthentication.Web.Areas.Identity.Pages.Account.LoginWithFido2Model
+@{
+  ViewData["Title"] = "Two-factor authentication";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<p>Your login is protected with an Fido2 Device.</p>
+<div class="row">
+  <div class="col-md-4">
+    <form action="/LoginWithFido2" method="post" id="signin">
+      <input class="input" type="hidden" value="@User.Identity.Name" required name="username">
+      <div class="field">
+        <div class="control">
+          <button class="btn btn-primary">2FA with Fido2 device</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<p>
+  Don't have access to your authenticator device? You can
+  <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+</p>
+
+
+
+
+
+<script src="~/js/helpers.js"></script>
+<script src="~/js/instant.js"></script>
+<script src="~/js/mfa.login.js"></script>

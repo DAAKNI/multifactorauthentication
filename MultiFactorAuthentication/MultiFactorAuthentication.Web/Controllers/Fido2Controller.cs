@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,19 +25,22 @@ namespace MultiFactorAuthentication.Web.Controllers
       private readonly IFido2 _fido2;
       private readonly IFido2CredentialService _fido2CredentialService;
       private readonly UserManager<ApplicationUser> _userManager;
+      private readonly SignInManager<ApplicationUser> _signInManager;
       public static IMetadataService _mds;
       public static readonly DevelopmentInMemoryStore DemoStorage = new DevelopmentInMemoryStore();
 
 
     public Fido2Controller(
       UserManager<ApplicationUser> userManager,
-      IFido2 fido2,
+      SignInManager<ApplicationUser> signInManager,
+    IFido2 fido2,
       IFido2CredentialService fido2CredentialService
       )
     {
       _fido2 = fido2;
       _fido2CredentialService = fido2CredentialService;
       _userManager = userManager;
+      _signInManager = signInManager;
     }
 
     private string FormatException(Exception e)
@@ -146,11 +150,11 @@ namespace MultiFactorAuthentication.Web.Controllers
         var applicationUser = await _userManager.GetUserAsync(HttpContext.User);
 
         // Schreibe die Credentials in die Datenbank
-        await _fido2CredentialService.AddCredentialToUser(new Fido2Credential()
+        var newFido2Credential = await _fido2CredentialService.AddCredentialToUser(new Fido2Credential()
         {
            UserId = applicationUser.Id,
-           Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
-           PublicKey = success.Result.PublicKey,
+           Descriptor = success.Result.CredentialId,
+          PublicKey = success.Result.PublicKey,
            UserHandle = success.Result.User.Id,
            SignatureCounter = success.Result.Counter,
            CredType = success.Result.CredType,
@@ -158,6 +162,10 @@ namespace MultiFactorAuthentication.Web.Controllers
            AaGuid = success.Result.Aaguid
         });
 
+        // applicationUser.Fido2Credentials.Add(newFido2Credential);
+        applicationUser.TwoFactorEnabled = true;
+        applicationUser.TwoFactorMethod = TwoFactorType.Fido2;
+        await _userManager.UpdateAsync(applicationUser);
         
         // #TODO Return Databse Entry not just JSON
 
@@ -168,6 +176,115 @@ namespace MultiFactorAuthentication.Web.Controllers
       catch (Exception e)
       {
         return new JsonResult(new Fido2.CredentialMakeResult { Status = "error", ErrorMessage =  FormatException(e) });
+      }
+    }
+
+
+
+
+    [HttpPost]
+    [Route("/assertionOptions")]
+    public async Task<ActionResult> AssertionOptionsPost([FromForm] string username, [FromForm] string userVerification)
+    {
+      try
+      {
+        var existingCredentials = new List<PublicKeyCredentialDescriptor>();
+
+        // 1. Get user from DB
+        var signInUser = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+        var applicationUser = await _userManager.FindByNameAsync(signInUser.UserName);
+        
+
+
+        // 2. Get registered credentials from database
+        var creds = await _fido2CredentialService.GetCredentialsByUser(applicationUser);
+
+        existingCredentials = creds.Select(c => new PublicKeyCredentialDescriptor (c.Descriptor)).ToList();
+
+          var exts = new AuthenticationExtensionsClientInputs()
+        {
+          SimpleTransactionAuthorization = "FIDO",
+          GenericTransactionAuthorization = new TxAuthGenericArg
+          {
+            ContentType = "text/plain",
+            Content = new byte[] { 0x46, 0x49, 0x44, 0x4F }
+          },
+          UserVerificationIndex = true,
+          Location = true,
+          UserVerificationMethod = true
+        };
+
+        // 3. Create options
+        var uv = string.IsNullOrEmpty(userVerification) ? UserVerificationRequirement.Discouraged : userVerification.ToEnum<UserVerificationRequirement>();
+        var options = _fido2.GetAssertionOptions(
+            existingCredentials,
+            uv,
+            exts
+        );
+
+        // 4. Temporarily store options, session/in-memory cache/redis/db
+        HttpContext.Session.SetString("fido2.assertionOptions", options.ToJson());
+
+        // 5. Return options to client
+        return Json(options);
+      }
+
+      catch (Exception e)
+      {
+        return Json(new AssertionOptions { Status = "error", ErrorMessage = FormatException(e) });
+      }
+    }
+
+    [HttpPost]
+    [Route("/makeAssertion")]
+    public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse)
+    {
+      try
+      {
+        // 1. Get the assertion options we sent the client
+        var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
+        var options = AssertionOptions.FromJson(jsonOptions);
+
+        // 2. Get registered credential from database
+        //var creds = DemoStorage.GetCredentialById(clientResponse.Id);
+        var signInUser = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+        var applicationUser = await _userManager.FindByNameAsync(signInUser.UserName);
+        // var creds = await _fido2CredentialService.GetCredentialsByUser(applicationUser);
+        var creds = _fido2CredentialService.GetCredentialByUserId(1);
+
+        //existingCredentials = creds.Select(c => new PublicKeyCredentialDescriptor(c.Descriptor)).ToList();
+
+        if (creds == null)
+        {
+          throw new Exception("Unknown credentials");
+        }
+
+        // 3. Get credential counter from database
+        var storedCounter = creds.SignatureCounter;
+
+        // 4. Create callback to check if userhandle owns the credentialId
+        IsUserHandleOwnerOfCredentialIdAsync callback = async (args) =>
+        {
+          var storedCreds = await _fido2CredentialService.GetCredentialsByUserHandleAsync(args.UserHandle);
+          return storedCreds.Exists(c => new PublicKeyCredentialDescriptor(c.Descriptor).Id.SequenceEqual(args.CredentialId));
+        };
+
+        // 5. Make the assertion
+        var res = await _fido2.MakeAssertionAsync(clientResponse, options, creds.PublicKey, storedCounter, callback);
+
+        // 6. Store the updated counter
+        // var code = await _fido2CredentialService.UpdateCounter(res.CredentialId, res.Counter);
+
+        
+        // var result = await _signInManager.TwoFactorSignInAsync("Fido2", string.Empty, false, false);
+        await _signInManager.SignInAsync(applicationUser, false);
+        
+        // 7. return OK to client
+        return Json(res);
+      }
+      catch (Exception e)
+      {
+        return Json(new AssertionVerificationResult { Status = "error", ErrorMessage = FormatException(e) });
       }
     }
   }

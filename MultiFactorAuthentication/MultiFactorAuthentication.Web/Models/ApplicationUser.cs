@@ -10,7 +10,8 @@ namespace MultiFactorAuthentication.Web.Models
 {
   public class ApplicationUser : IdentityUser
   {
-    public string TwoFactorMethod { get; set; }
+    public TwoFactorType TwoFactorMethod { get; set; }
+    public ICollection<Fido2Credential> Fido2Credentials { get; set; }
 
   }
 }

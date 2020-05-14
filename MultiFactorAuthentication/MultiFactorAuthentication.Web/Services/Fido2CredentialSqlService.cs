@@ -5,6 +5,9 @@ using System.Reflection.Metadata.Ecma335;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
+using Fido2NetLib.Development;
+using Fido2NetLib.Objects;
+using Microsoft.EntityFrameworkCore;
 using MultiFactorAuthentication.Web.Data;
 using MultiFactorAuthentication.Web.Models;
 
@@ -29,22 +32,26 @@ namespace MultiFactorAuthentication.Web.Services
       _db.Add(cred);
     }
 
-    public void UpdateCounter(byte[] credentialId, uint counter)
+    public async Task<int> UpdateCounter(byte[] credentialId, uint counter)
     {
-      throw new NotImplementedException();
+      var cred = _db.Fido2Credentials.Where(c => new PublicKeyCredentialDescriptor(c.Descriptor).Id.SequenceEqual(credentialId)).FirstOrDefault();
+      cred.SignatureCounter = counter;
+      await _db.SaveChangesAsync();
+      return 0;
+
     }
 
     // public List<Fido2Credential> GetCredentialsByUser(ApplicationUser user)
     // {
     //   return _db.Fido2Credentials.Where(c => c.UserId.SequenceEqual(user.Id)).ToList();
     // }
-   public IEnumerable<Fido2Credential> GetCredentialsByUser(ApplicationUser user)
+   public async Task<List<Fido2Credential>> GetCredentialsByUser(ApplicationUser user)
    {
-      var query = from r in _db.Fido2Credentials
-      where r.UserId.StartsWith(user.Id) || string.IsNullOrEmpty(user.Id)
-      select r;
-     return query;
-     
+      //  var query = from r in _db.Fido2Credentials
+      //  where r.UserId.StartsWith(user.Id) || string.IsNullOrEmpty(user.Id)
+      //  select r;
+      // return query;
+      return await _db.Fido2Credentials.Where(c => c.UserId == user.Id).ToListAsync();
     }
 
     public List<ApplicationUser> GetUsersByCredentialIdAsync(byte[] argsCredentialId)
@@ -52,15 +59,22 @@ namespace MultiFactorAuthentication.Web.Services
       throw new NotImplementedException();
     }
 
-    public async Task AddCredentialToUser(Fido2Credential newFido2Credential)
+    public async Task<Fido2Credential> AddCredentialToUser(Fido2Credential newFido2Credential)
     {
       _db.Fido2Credentials.Add(newFido2Credential);
       await _db.SaveChangesAsync();
+      return newFido2Credential;
     }
 
     public int Commit()
     {
       return _db.SaveChanges();
+    }
+
+    public async Task<List<Fido2Credential>> GetCredentialsByUserHandleAsync(byte[] userHandle)
+    {
+      // return Task.FromResult(_db.Fido2Credentials.Where(c => c.UserHandle.SequenceEqual(userHandle)).ToList());
+      return await _db.Fido2Credentials.Where(c => c.UserHandle == userHandle).ToListAsync();
     }
 
     // public List<ApplicationUser> GetUsersByCredentialIdAsync(byte[] argsCredentialId)

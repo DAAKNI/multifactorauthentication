@@ -13,9 +13,8 @@ namespace MultiFactorAuthentication.Web.Models
   {
     public int Id { get; set; }
     public string UserId { get; set; }
-    public string Foo { get; set; }
-    [NotMapped]
-    public PublicKeyCredentialDescriptor Descriptor { get ; set; }
+
+   public byte[] Descriptor { get ; set; }
 
   }
 }

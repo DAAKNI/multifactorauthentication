@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFactorAuthentication.Web.Data;
 
 namespace MultiFactorAuthentication.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200513084501_CredentialRelationship")]
+    partial class CredentialRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,8 +204,8 @@ namespace MultiFactorAuthentication.Web.Data.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("TwoFactorMethod")
-                        .HasColumnType("int");
+                    b.Property<string>("TwoFactorMethod")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(256)")
@@ -237,9 +239,6 @@ namespace MultiFactorAuthentication.Web.Data.Migrations
 
                     b.Property<string>("CredType")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Descriptor")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<byte[]>("PublicKey")
                         .HasColumnType("varbinary(max)");

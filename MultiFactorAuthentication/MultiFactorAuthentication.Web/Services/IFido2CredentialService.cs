@@ -12,11 +12,14 @@ namespace MultiFactorAuthentication.Web.Services
   {
     Fido2Credential GetCredentialByUserId(int id);
     void AddCredential(Fido2Credential cred);
-    void UpdateCounter(byte[] credentialId, uint counter);
-    IEnumerable<Fido2Credential> GetCredentialsByUser(ApplicationUser user);
+    Task<int> UpdateCounter(byte[] credentialId, uint counter);
+    Task<List<Fido2Credential>> GetCredentialsByUser(ApplicationUser user);
     List<ApplicationUser> GetUsersByCredentialIdAsync(byte[] argsCredentialId);
-    Task AddCredentialToUser(Fido2Credential storedCredential);
+    Task<Fido2Credential> AddCredentialToUser(Fido2Credential storedCredential);
+
+    
 
     int Commit();
+      Task<List<Fido2Credential>> GetCredentialsByUserHandleAsync(byte[] argsUserHandle);
   }
 }

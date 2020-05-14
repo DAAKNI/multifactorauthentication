@@ -19,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MultiFactorAuthentication.Web.Models;
 using MultiFactorAuthentication.Web.Services;
-
 namespace MultiFactorAuthentication.Web
 {
   public class Startup
@@ -53,8 +52,9 @@ namespace MultiFactorAuthentication.Web
       services.AddDbContext<ApplicationDbContext>(options =>
           options.UseSqlServer(
               Configuration.GetConnectionString("DefaultConnection")));
-      services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+      services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders(); 
       services.AddScoped<IFido2CredentialService, Fido2CredentialSqlService>();
       services.AddControllersWithViews();
       services.AddControllers()
