@@ -3,19 +3,10 @@
 async function handleSignInSubmit(event) {
     event.preventDefault();
 
-//  let username = this.username.value;
-//  console.log(username);
-
-  // passwordfield is omitted in demo
-    // let password = this.password.value;
-
-
     // prepare form post data
     var formData = new FormData();
-//    formData.append('username', username);
 
-    // not done in demo
-    // todo: validate username + password with server (has nothing to do with FIDO2/WebAuthn)
+    
 
     // send to server for registering
     let makeAssertionOptions;

@@ -139,7 +139,7 @@ namespace MultiFactorAuthentication.Web.Controllers
         // };
         IsCredentialIdUniqueToUserAsyncDelegate callback = async (IsCredentialIdUniqueToUserParams args) =>
         {
-          // #TODO Check if credentials are unique
+          // TODO Check if credentials are unique
           return true;
         };
 
@@ -167,7 +167,7 @@ namespace MultiFactorAuthentication.Web.Controllers
         applicationUser.TwoFactorMethod = TwoFactorType.Fido2;
         await _userManager.UpdateAsync(applicationUser);
         
-        // #TODO Return Databse Entry not just JSON
+        // TODO Return Databse Entry not just JSON
 
 
         // 4. return "ok" to the client
@@ -272,9 +272,9 @@ namespace MultiFactorAuthentication.Web.Controllers
         var res = await _fido2.MakeAssertionAsync(clientResponse, options, creds.PublicKey, storedCounter, callback);
 
         // 6. Store the updated counter
-        // var code = await _fido2CredentialService.UpdateCounter(res.CredentialId, res.Counter);
-        // #TODO Fix counter
-        // #TODO Allow more than one key to work
+        var code = await _fido2CredentialService.UpdateCounter(res.CredentialId, res.Counter);
+        // TODO Fix counter
+        // TODO Allow more than one key to work
         
         // var result = await _signInManager.TwoFactorSignInAsync("Fido2", string.Empty, false, false);
         await _signInManager.SignInAsync(applicationUser, false);

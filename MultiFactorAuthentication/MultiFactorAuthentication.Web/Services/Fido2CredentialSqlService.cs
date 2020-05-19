@@ -34,7 +34,7 @@ namespace MultiFactorAuthentication.Web.Services
 
     public async Task<int> UpdateCounter(byte[] credentialId, uint counter)
     {
-      var cred = _db.Fido2Credentials.FirstOrDefault(c => new PublicKeyCredentialDescriptor(c.Descriptor).Id.SequenceEqual(credentialId));
+      var cred = _db.Fido2Credentials.FirstOrDefault(c => c.Descriptor == credentialId);
       cred.SignatureCounter = counter;
       await _db.SaveChangesAsync();
       return 0;

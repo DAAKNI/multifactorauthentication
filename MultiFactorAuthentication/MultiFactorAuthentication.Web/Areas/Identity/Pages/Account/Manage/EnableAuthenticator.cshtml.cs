@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using MultiFactorAuthentication.Web.Models;
 
+
+// TODO Change Two Factor Method When enabling
 namespace MultiFactorAuthentication.Web.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
@@ -31,6 +33,7 @@ namespace MultiFactorAuthentication.Web.Areas.Identity.Pages.Account.Manage
             _logger = logger;
             _urlEncoder = urlEncoder;
         }
+
 
         public string SharedKey { get; set; }
 
@@ -149,7 +152,7 @@ namespace MultiFactorAuthentication.Web.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("MultiFactorAuthentication.Web"),
+                _urlEncoder.Encode("MultiFactorAuthentication"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }
