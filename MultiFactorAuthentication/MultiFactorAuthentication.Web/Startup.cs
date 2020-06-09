@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Fido2NetLib;
 using Fido2NetLib.Development;
@@ -17,6 +18,7 @@ using MultiFactorAuthentication.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using MultiFactorAuthentication.Web.Models;
 using MultiFactorAuthentication.Web.Services;
 namespace MultiFactorAuthentication.Web
@@ -54,12 +56,31 @@ namespace MultiFactorAuthentication.Web
               Configuration.GetConnectionString("DefaultConnection")));
       services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedEmail = false)
         .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders(); 
+        .AddDefaultTokenProviders();
+
+      //services.AddAuthentication()
+      //  .AddCookie()
+      //  .AddJwtBearer();
+
+
+      services
+        .AddAuthentication()
+        .AddCookie()
+        .AddJwtBearer(cfg =>
+        {
+          cfg.TokenValidationParameters = new TokenValidationParameters()
+          {
+            ValidIssuer = Configuration["Tokens:Issuer"],
+            ValidAudience = Configuration["Tokens:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+          };
+        });
+
       services.AddScoped<IFido2CredentialService, Fido2CredentialSqlService>();
       services.AddControllersWithViews();
       services.AddControllers()
         .AddNewtonsoftJson();
-
+      services.AddHttpContextAccessor();
 
 
       services.AddRazorPages(opts =>
@@ -70,7 +91,9 @@ namespace MultiFactorAuthentication.Web
 
 
 
-      //services.AddSingleton<IEcuService, InMemoryEcuService>();
+      services.AddSingleton<IEcuService, InMemoryEcuService>();
+
+
       //services.AddSingleton<IUserService, InMemoryUserService>();
       //services.AddFido2(options =>
       //{

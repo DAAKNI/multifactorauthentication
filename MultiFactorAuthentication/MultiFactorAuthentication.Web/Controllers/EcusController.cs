@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiFactorAuthentication.Web.Models;
@@ -11,7 +11,8 @@ using MultiFactorAuthentication.Web.Services;
 namespace MultiFactorAuthentication.Web.Controllers
 {
   [ApiController]
-  [Authorize]
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+  //[Authorize]
   [Route("api/ecus")]
   public class EcusController : ControllerBase
   {
