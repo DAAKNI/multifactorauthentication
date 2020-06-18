@@ -10,7 +10,11 @@ using MultiFactorAuthentication.Web.Services;
 
 namespace MultiFactorAuthentication.Web.Controllers
 {
+  /*
+   * Controller for Rest api /api/ecus
+   */
   [ApiController]
+  // Use JWT Token for Authentication
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   //[Authorize]
   [Route("api/ecus")]

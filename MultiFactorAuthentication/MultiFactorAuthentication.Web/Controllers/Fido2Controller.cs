@@ -60,12 +60,6 @@ namespace MultiFactorAuthentication.Web.Controllers
       try
       {
 
-        //if (string.IsNullOrEmpty(username))
-        //{
-        //  username = $"{displayName} (Usernameless user created at {DateTime.UtcNow})";
-        //}
-
-        
         var applicationUser = await _userManager.GetUserAsync(HttpContext.User);
 
          // 1. Get user from DB by username (in our example, auto create missing users)

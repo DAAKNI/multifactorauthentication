@@ -20,17 +20,6 @@ namespace MultiFactorAuthentication.Web.Data
     protected override void OnModelCreating(ModelBuilder builder)
     {
       
-      // builder
-      //   .Entity<Fido2Credential>()
-      //   .Property(t => t.Descriptor).HasConversion<byte[]>();
-
-
-
-
-
-
-        // .Selct(c.Descriptor => new PublicKeyCredentialDescriptor(c.Descriptor));
-        //builder.Entity<Fido2Credential>().HasKey(m => m.Id);
       base.OnModelCreating(builder);
     }
   }

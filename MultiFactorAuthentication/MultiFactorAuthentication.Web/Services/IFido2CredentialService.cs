@@ -18,8 +18,6 @@ namespace MultiFactorAuthentication.Web.Services
     List<ApplicationUser> GetUsersByCredentialIdAsync(byte[] argsCredentialId);
     Task<Fido2Credential> AddCredentialToUser(Fido2Credential storedCredential);
 
-    
-
     int Commit();
       Task<List<Fido2Credential>> GetCredentialsByUserHandleAsync(byte[] argsUserHandle);
   }
