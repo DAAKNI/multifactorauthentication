@@ -21,6 +21,7 @@ namespace MultiFactorAuthentication.Web.Models
    public string CredType { get; set; }
    public DateTime RegDate { get; set; }
    public Guid AaGuid { get; set; }
+   public string ApplicationUserId { get; set; }
 
   }
 }

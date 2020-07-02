@@ -51,9 +51,13 @@ namespace MultiFactorAuthentication.Web
         // and breaks conformance testing
         //options.Cookie.SameSite = SameSiteMode.Strict;
       });
-      services.AddDbContext<ApplicationDbContext>(options =>
-          options.UseSqlServer(
-              Configuration.GetConnectionString("DefaultConnection")));
+
+      // services.AddDbContext<ApplicationDbContext>(options =>
+      //     options.UseSqlServer(
+      //         Configuration.GetConnectionString("DefaultConnection")));
+
+      services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>();
+
       services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedEmail = false)
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();

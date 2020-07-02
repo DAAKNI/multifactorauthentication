@@ -15,6 +15,9 @@ namespace MultiFactorAuthentication.Web.Data
     {
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
+      => options.UseSqlite("Filename=app.db");
+
     public DbSet<Fido2Credential> Fido2Credentials { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
