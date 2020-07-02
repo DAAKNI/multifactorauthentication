@@ -13,7 +13,7 @@ COPY . .
 WORKDIR "/src/MultiFactorAuthentication.Web"
 RUN dotnet build "MultiFactorAuthentication.Web.csproj" -c Release -o /app/build
 
-FROM build AS debug
+FROM build AS publish
 RUN dotnet publish "MultiFactorAuthentication.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
