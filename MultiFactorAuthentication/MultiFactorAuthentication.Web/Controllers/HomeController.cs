@@ -87,11 +87,7 @@ namespace MultiFactorAuthentication.Web.Controllers
         };
         return Created("", results);
       }
-      else
-      {
-        return BadRequest();
-      }
-
+     
       return BadRequest();
     }
   }

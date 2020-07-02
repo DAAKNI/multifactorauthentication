@@ -96,13 +96,10 @@ namespace MultiFactorAuthentication.Web.Areas.Identity.Pages.Account
                   {
                     case TwoFactorType.Authenticator:
                       return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                      break;
                     case TwoFactorType.Fido2:
                       return RedirectToPage("./LoginWithFido2", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                      break;
                     default:
                       return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                      break;
                   }
           
                 }
