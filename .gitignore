@@ -272,5 +272,5 @@ __pycache__/
 .svn/
 
 # Sqllite Database
-.db
+*.db
 
