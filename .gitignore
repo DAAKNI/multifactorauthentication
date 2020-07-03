@@ -267,3 +267,10 @@ __pycache__/
 
 # Cake - Uncomment if you are using it
 # tools/
+
+# Subversion Folder
+.svn/
+
+# Sqllite Database
+.db
+
