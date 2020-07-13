@@ -1,8 +1,31 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using System.Text
+@using Microsoft.AspNetCore.Identity
+@using MultiFactorAuthentication.Web.Services
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IFido2CredentialService Fido2CredentialService
+@model DetailsModel
 @{
   ViewData["Title"] = "Home Page";
+
+
+  //try
+  //{
+
+
+  //  var user = @UserManager.GetUserAsync(User);
+
+  //  var userIdByte = Encoding.ASCII.GetBytes(user.Result.Id);
+  //  var credential = Fido2CredentialService.GetCredentialsByUserHandleAsync(userIdByte);
+  //}
+  //catch
+  //{
+
+  //}
+
+
+
+
 }
 
 <div class="text-center">
@@ -11,12 +34,34 @@
     @if (SignInManager.IsSignedIn(User))
     {
       <p>You are logged in now</p>
+
+      var user = @UserManager.GetUserAsync(User);
+      var userIdByte = Encoding.ASCII.GetBytes(user.Result.Id);
+      var credential = Fido2CredentialService.GetCredentialsByUserHandleAsync(userIdByte);
+
+
+      <p>Your second Factor is@user.Result.TwoFactorMethod</p>
+      <p>User Id: @user.Result.Id</p>
+      @if (user.Result.TwoFactorMethod == TwoFactorType.Fido2)
+      {
+        <p>@credential.Result[0].AaGuid</p>
+        var pubKey = System.Convert.ToBase64String(credential.Result[0].PublicKey);
+        <p>@pubKey</p>
+      }
+
+
+
+
+
+
+
+
     }
     else
     {
       <p> Please Register an Account </p>
     }
-    
+
   </div>
 
 </div>

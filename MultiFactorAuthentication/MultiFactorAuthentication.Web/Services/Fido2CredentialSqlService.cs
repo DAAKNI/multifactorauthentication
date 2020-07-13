@@ -27,6 +27,7 @@ namespace MultiFactorAuthentication.Web.Services
       return _db.Fido2Credentials.FirstOrDefault(c => c.UserId == user.Id);
     }
 
+
     public void AddCredential(Fido2Credential cred)
     {
       _db.Add(cred);
