@@ -1,0 +1,21 @@
+﻿@using System.Text
+@using Microsoft.AspNetCore.Identity
+@using MultiFactorAuthentication.Web.Services
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IFido2CredentialService Fido2CredentialService
+@{
+  ViewData["Title"] = "INFO Page";
+
+
+
+
+}
+
+<div class="text-center">
+  <h1 class="display-4">Welcome</h1>
+  <div class="container">
+    <h1>INFO</h1>
+  </div>
+
+</div>

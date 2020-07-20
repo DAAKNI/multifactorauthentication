@@ -52,21 +52,17 @@ namespace MultiFactorAuthentication.Web
         //options.Cookie.SameSite = SameSiteMode.Strict;
       });
 
-      // services.AddDbContext<ApplicationDbContext>(options =>
-      //     options.UseSqlServer(
-      //         Configuration.GetConnectionString("DefaultConnection")));
 
+
+      // Add SQLITE as DB for persisting ApplicationUsers and Fido2Credentials
       services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>();
 
+      // Setting up the IdentityFramework with ApplicationUser as default Usertype
       services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedEmail = false)
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
-      //services.AddAuthentication()
-      //  .AddCookie()
-      //  .AddJwtBearer();
-
-
+      // Setting up Authentication and JSON Web Token fun
       services
         .AddAuthentication()
         .AddCookie()
@@ -98,50 +94,14 @@ namespace MultiFactorAuthentication.Web
       services.AddSingleton<IEcuService, InMemoryEcuService>();
 
 
-      //services.AddSingleton<IUserService, InMemoryUserService>();
-      //services.AddFido2(options =>
-      //{
-      //  options.ServerDomain = Configuration["fido2:serverDomain"];
-      //  options.ServerName = Configuration["fido2:serverName"];
-      //  options.Origin = Configuration["fido2:origin"];
-      //  options.TimestampDriftTolerance = Configuration.GetValue<int>("fido2:timestampDriftTolerance");
-      //});
-
       services.AddFido2(options =>
-        {
-          options.ServerDomain = Configuration["fido2:serverDomain"];
-          options.ServerName = "FIDO2 Test";
-          options.Origin = Configuration["fido2:origin"];
-          options.TimestampDriftTolerance = Configuration.GetValue<int>("fido2:timestampDriftTolerance");
-          options.MDSAccessKey = Configuration["fido2:MDSAccessKey"];
-          options.MDSCacheDirPath = Configuration["fido2:MDSCacheDirPath"];
-        })
-        .AddCachedMetadataService(config =>
-        {
-          //They'll be used in a "first match wins" way in the order registered
-          config.AddStaticMetadataRepository();
-          if (!string.IsNullOrWhiteSpace(Configuration["fido2:MDSAccessKey"]))
-          {
-            config.AddFidoMetadataRepository(Configuration["fido2:MDSAccessKey"]);
-          }
-        });
+      {
+        options.ServerDomain = Configuration["fido2:serverDomain"];
+        options.ServerName = "FIDO2 Test";
+        options.Origin = Configuration["fido2:origin"];
+        options.TimestampDriftTolerance = Configuration.GetValue<int>("fido2:timestampDriftTolerance");
+      });
 
-      services.AddFido2(options =>
-        {
-          options.ServerDomain = Configuration["fido2:serverDomain"];
-          options.ServerName = "FIDO2 Test";
-          options.Origin = Configuration["fido2:origin"];
-          options.TimestampDriftTolerance = Configuration.GetValue<int>("fido2:timestampDriftTolerance");
-        })
-        .AddCachedMetadataService(config =>
-        {
-          //They'll be used in a "first match wins" way in the order registered
-          config.AddStaticMetadataRepository();
-          if (!string.IsNullOrWhiteSpace(Configuration["fido2:MDSAccessKey"]))
-          {
-            config.AddFidoMetadataRepository(Configuration["fido2:MDSAccessKey"]);
-          }
-        });
 
 
 

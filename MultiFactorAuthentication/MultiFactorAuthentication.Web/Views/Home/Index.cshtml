@@ -4,7 +4,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IFido2CredentialService Fido2CredentialService
-@model DetailsModel
 @{
   ViewData["Title"] = "Home Page";
 
@@ -29,24 +28,39 @@
 }
 
 <div class="text-center">
-  <h1 class="display-4">Welcome</h1>
+  
   <div class="container">
     @if (SignInManager.IsSignedIn(User))
     {
-      <p>You are logged in now</p>
+      <h1 class="display-4">Dashboard</h1>
 
       var user = @UserManager.GetUserAsync(User);
       var userIdByte = Encoding.ASCII.GetBytes(user.Result.Id);
       var credential = Fido2CredentialService.GetCredentialsByUserHandleAsync(userIdByte);
 
 
-      <p>Your second Factor is@user.Result.TwoFactorMethod</p>
+      <p>Your second Factor is @user.Result.TwoFactorMethod</p>
       <p>User Id: @user.Result.Id</p>
       @if (user.Result.TwoFactorMethod == TwoFactorType.Fido2)
       {
-        <p>@credential.Result[0].AaGuid</p>
+
         var pubKey = System.Convert.ToBase64String(credential.Result[0].PublicKey);
-        <p>@pubKey</p>
+        var userHandle = Encoding.ASCII.GetString(credential.Result[0].UserHandle);
+        <table>
+          <tr>
+            <th>UserHandle</th>
+            <th>Public Key</th>
+            <th>AaGuid</th>
+          </tr>
+          <tr>
+            <td>@userHandle</td>
+            <td> @pubKey</td>
+            <td>@credential.Result[0].AaGuid</td>
+          </tr>
+          
+        </table>
+      
+       
       }
 
 
@@ -59,6 +73,7 @@
     }
     else
     {
+      <h1 class="display-4">Welcome</h1>
       <p> Please Register an Account </p>
     }
 

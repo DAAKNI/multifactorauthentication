@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,11 @@ using MultiFactorAuthentication.Web.Models;
 
 namespace MultiFactorAuthentication.Web.Controllers
 {
+  /*
+   * If a user is already logged in the TokenController provides a JSON Web Token
+   * to access the REST API
+   */
+  [Authorize]
     public class TokenController : Controller
     {
       private readonly SignInManager<ApplicationUser> _signInManager;

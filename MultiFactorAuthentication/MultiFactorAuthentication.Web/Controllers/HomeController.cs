@@ -16,6 +16,10 @@ using MultiFactorAuthentication.Web.Models;
 
 namespace MultiFactorAuthentication.Web.Controllers
 {
+  /*
+   * The HomeController is responsible for displaying the views in /Views/Home
+   * and is getting wired up in the Startup.cs
+  */
   public class HomeController : Controller
   {
     public IActionResult Index()
@@ -23,6 +27,10 @@ namespace MultiFactorAuthentication.Web.Controllers
       return View();
     }
 
+    public IActionResult Info()
+    {
+      return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

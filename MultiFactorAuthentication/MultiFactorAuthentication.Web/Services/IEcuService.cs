@@ -6,6 +6,9 @@ using MultiFactorAuthentication.Web.Models;
 
 namespace MultiFactorAuthentication.Web.Services
 {
+  /*
+   * Interface the defines the functionality of the EcuService
+   */
   public interface IEcuService
   {
     Ecu Create(Ecu newEcu);

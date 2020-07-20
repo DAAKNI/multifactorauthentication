@@ -11,12 +11,13 @@ using MultiFactorAuthentication.Web.Services;
 namespace MultiFactorAuthentication.Web.Controllers
 {
   /*
-   * Controller for Rest api /api/ecus
+   * This controller provides a REST API for a IEcuService via dependency injection.
+   * In this case the implementation InMemoryEcuService.cs is used which has been set up in the Startup.cs 
+   *
    */
   [ApiController]
   // Use JWT Token for Authentication
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-  //[Authorize]
   [Route("api/ecus")]
   public class EcusController : ControllerBase
   {

@@ -7,6 +7,11 @@ using MultiFactorAuthentication.Web.Models;
 namespace MultiFactorAuthentication.Web.Services
 {
 
+  /*
+   * The InMemoryEcuService implements the IEcuService interface. It serves
+   * as a simple in memory data storage for ECU, the changes therefor are not persistent.
+   * Purely intented for testing, mocking and demonstration purposes.
+   */
   public class InMemoryEcuService : IEcuService
   {
     List<Ecu> ecus;
