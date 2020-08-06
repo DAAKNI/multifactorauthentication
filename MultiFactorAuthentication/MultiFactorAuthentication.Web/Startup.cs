@@ -76,7 +76,7 @@ namespace MultiFactorAuthentication.Web
           };
         });
 
-      services.AddScoped<IFido2CredentialService, Fido2CredentialSqlService>();
+      
       services.AddControllersWithViews();
       services.AddControllers()
         .AddNewtonsoftJson();
@@ -85,15 +85,17 @@ namespace MultiFactorAuthentication.Web
 
       services.AddRazorPages(opts =>
       {
-        // we don't care about antiforgery in the demo
         opts.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
       }).AddNewtonsoftJson();
 
 
-
+      // Add an in Memory Database for the EcuService (api/ecus/)
       services.AddSingleton<IEcuService, InMemoryEcuService>();
 
+      // Setup the Fido2CredentialService to persist Credentials to the Database
+      services.AddScoped<IFido2CredentialService, Fido2CredentialSqlService>();
 
+      // Setup Fido2
       services.AddFido2(options =>
       {
         options.ServerDomain = Configuration["fido2:serverDomain"];
@@ -124,14 +126,10 @@ namespace MultiFactorAuthentication.Web
       }
 
       app.UseSession();
-      // app.UseHttpsRedirection();
+      app.UseHttpsRedirection();
       app.UseStaticFiles();
-
       app.UseRouting();
-
       app.UseAuthentication();
-
-     
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
