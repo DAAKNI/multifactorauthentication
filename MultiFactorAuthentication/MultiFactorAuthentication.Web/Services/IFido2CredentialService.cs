@@ -8,6 +8,10 @@ using MultiFactorAuthentication.Web.Models;
 
 namespace MultiFactorAuthentication.Web.Services
 {
+/*
+ * This interface defines the functionality of the service which adds and gets Fido2 Credential to a from a user.
+ * It may be implemented by a in memory service or a database service.
+ */
   public interface IFido2CredentialService
   {
     

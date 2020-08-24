@@ -9,6 +9,10 @@ using Newtonsoft.Json;
 
 namespace MultiFactorAuthentication.Web.Models
 {
+
+  /*
+   * This class represents a FIDO2 Credential which is getting connected to a user account
+   */
   public class Fido2Credential 
   {
     public int Id { get; set; }

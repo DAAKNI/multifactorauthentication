@@ -62,7 +62,7 @@ namespace MultiFactorAuthentication.Web
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
-      // Setting up Authentication and JSON Web Token fun
+      // Setting up Authentication and JSON Web Token Validation. You'll find the Configuration in the 'appsettings.json'
       services
         .AddAuthentication()
         .AddCookie()
@@ -113,6 +113,7 @@ namespace MultiFactorAuthentication.Web
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+      // Checks if server is running in a development environment or production
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();

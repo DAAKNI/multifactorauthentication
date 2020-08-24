@@ -10,6 +10,9 @@
       Please note: Your browser does not seem to support WebAuthn yet. <a href="https://caniuse.com/#search=webauthn" target="_blank">Supported browsers</a>
     </div>
     <h3 class="title is-3">Register your yubikey</h3>
+    @*
+        The FIDO2 registration is accomplished by a event listener that is attached to the registration button (by ID 'register') ind script mfa.register.js
+    *@
     <form action="/RegisterFido" method="post" id="register">
       <div class="field">
         <div class="control has-icons-left has-icons-right">

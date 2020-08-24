@@ -1,19 +1,16 @@
 ﻿document.getElementById('register').addEventListener('submit', handleRegisterSubmit);
 
+// Add a event listener to the register button of the RegisterFido page that triggers to Fido2 registration when user clicks the 'register' button
+
 async function handleRegisterSubmit(event) {
     event.preventDefault();
 
   let username = this.username.value;
 
-  //let displayName = this.displayName.value;
 
-    // passwordfield is omitted in demo
-    // let password = this.password.value;
-
-    // possible values: none, direct, indirect
     let attestation_type = "none";
     // possible values: <empty>, platform, cross-platform
-    let authenticator_attachment = "";
+  let authenticator_attachment = "";
 
     // possible values: preferred, required, discouraged
     let user_verification = "preferred";

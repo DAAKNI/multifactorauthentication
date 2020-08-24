@@ -46,15 +46,6 @@ async function handleSignInSubmit(event) {
 
     console.log("Assertion options", makeAssertionOptions);
 
-//    Swal.fire({
-//        title: 'Logging In...',
-//        text: 'Tap your security key to login.',
-//        imageUrl: "/images/securitykey.min.svg",
-//        showCancelButton: true,
-//        showConfirmButton: false,
-//        focusConfirm: false,
-//        focusCancel: false
-//    });
 
     // ask browser for credentials (browser will ask connected authenticators)
     let credential;
